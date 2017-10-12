@@ -1,13 +1,16 @@
 package com.restapi.model;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Created by bmahule on 10/10/17.
@@ -18,26 +21,28 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
         allowGetters = true)
-public class Tweets {
+public class Tweet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", updatable = false, nullable = false)
     private int id;
 
     @NotBlank
+    @Column
     private String userName;
 
     @NotBlank
+    @Column
     private String tweetText;
 
-    @Column(nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @CreatedDate
-    private Date createdAt;
+    @Column
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @CreationTimestamp
+    private Timestamp createdAt;
 
-    public Tweets() {
-
+    public Tweet() {
     }
 
     public int getId() {
@@ -63,5 +68,9 @@ public class Tweets {
     public void setTweetText(String text) {
         this.tweetText = text;
     }
+//
+//    public long getTimeStamp() { return timestamp; }
+//
+//    public void setTimestamp(long time) { this.timestamp = time; }
 }
 

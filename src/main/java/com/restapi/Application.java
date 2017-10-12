@@ -22,11 +22,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.context.annotation.ComponentScan;
-import com.restapi.TweetsController;
+//import com.restapi.TweetsController;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@ComponentScan(basePackageClasses = TweetsController.class)
+@ComponentScan(basePackageClasses = HomeController.class)
 public class Application {
 
     public static void main(String[] args) {
