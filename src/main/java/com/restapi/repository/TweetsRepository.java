@@ -1,6 +1,7 @@
 package com.restapi.repository;
 
 import com.restapi.model.Tweet;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +11,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TweetsRepository extends CrudRepository<Tweet, Integer> {
+
+    @Query(value = "SELECT * FROM tweets t WHERE t.user_name=:userName",
+            nativeQuery = true
+    )
+    Iterable<Tweet> findAll(String userName);
 }

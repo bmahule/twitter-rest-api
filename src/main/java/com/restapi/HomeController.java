@@ -4,6 +4,7 @@ package com.restapi;
  * Created by bmahule on 10/10/17.
  */
 
+import com.restapi.authentication.IAuthenticationFacade;
 import com.restapi.model.Tweet;
 import com.restapi.repository.TweetsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,18 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @RestController
 public class HomeController {
 
     private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    @Autowired
+    private IAuthenticationFacade authenticationFacade;
 
     @RequestMapping(value="/login", method = RequestMethod.GET)
     public void loginPage (HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -48,20 +55,24 @@ public class HomeController {
 
     @GetMapping(path="/api/tweet") // Map ONLY GET Requests
     public @ResponseBody String createNewTweet (@RequestParam String userName, @RequestParam String tweetText) {
-        // @ResponseBody means the returned String is the response, not a view name
-        // @RequestParam means it is a parameter from the GET or POST request
-
         Tweet t = new Tweet();
         t.setUserName(userName);
         t.setTweetText(tweetText);
-        //t.setTimestamp(timestamp.getTime());
         tweetsRepository.save(t);
         return "Saved";
     }
 
-    @GetMapping(path="/api/feed")
-    public @ResponseBody Iterable<Tweet> getAllTweets() {
-        // This returns a JSON or XML with the users
-        return tweetsRepository.findAll();
+    @RequestMapping(path="/api/feed")
+    public @ResponseBody Iterable<Tweet> findAll() {
+        return tweetsRepository.findAll(currentUserName());
     }
+
+    @RequestMapping(value = "/username", method = RequestMethod.GET)
+    @ResponseBody
+    public String currentUserName() {
+        Authentication authentication = authenticationFacade.getAuthentication();
+        return authentication.getName();
+    }
+
+
 }

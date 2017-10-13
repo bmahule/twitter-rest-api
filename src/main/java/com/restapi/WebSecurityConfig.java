@@ -28,12 +28,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth
                 .ldapAuthentication()
                 .userDnPatterns("uid={0},ou=people")
-                .groupSearchBase("ou=groups")
+//                .groupSearchBase("ou=groups")
                 .contextSource()
                 .url("ldap://localhost:8389/dc=springframework,dc=org")
                 .and()
                 .passwordCompare()
-                .passwordEncoder(new LdapShaPasswordEncoder())
+                //.passwordEncoder(new LdapShaPasswordEncoder())
                 .passwordAttribute("userPassword");
     }
 

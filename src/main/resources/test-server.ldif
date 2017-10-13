@@ -44,6 +44,16 @@ sn: Alex
 uid: ben
 userPassword: {SHA}nFCebWjxfaLbHHG1Qk5UU4trbvQ=
 
+dn: uid=sam,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Sam Alis
+sn: Alis
+uid: sam
+userPassword: samspassword
+
 dn: uid=bob,ou=people,dc=springframework,dc=org
 objectclass: top
 objectclass: person
@@ -103,8 +113,6 @@ cn: Space Cadet
 sn: Cadet
 uid: space cadet
 userPassword: spacecadetspassword
-
-
 
 dn: cn=developers,ou=groups,dc=springframework,dc=org
 objectclass: top
