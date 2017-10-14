@@ -10,6 +10,7 @@ import com.restapi.repository.TweetsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class HomeController {
@@ -71,7 +73,10 @@ public class HomeController {
     @ResponseBody
     public String currentUserName() {
         Authentication authentication = authenticationFacade.getAuthentication();
+
         return authentication.getName();
+        //return authentication.getPrincipal().toString();
+        //org.springframework.security.ldap.userdetails.LdapUserDetailsImpl@f1229e55: Dn: uid=bob,ou=people,dc=springframework,dc=org; Username: bob; Password: [PROTECTED]; Enabled: true; AccountNonExpired: true; CredentialsNonExpired: true; AccountNonLocked: true; Not granted any authorities
     }
 
 
