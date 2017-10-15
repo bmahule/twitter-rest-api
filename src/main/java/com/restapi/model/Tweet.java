@@ -1,6 +1,7 @@
 package com.restapi.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotBlank;
@@ -17,28 +18,27 @@ import java.time.LocalDateTime;
  */
 
 @Entity
-@Table(name = "tweets")
+@Table(name = "Tweets")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
         allowGetters = true)
 public class Tweet {
 
     @Id
+    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private int id;
 
-    @NotBlank
-    @Column
+    @NotNull
+    @Column(name = "user_name", updatable = false, nullable = false)
     private String userName;
 
     @NotBlank
-    @Column
+    @Column(name = "tweet_text")
     private String tweetText;
 
-    @Column
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "time_stamp")
     @CreationTimestamp
     private Timestamp createdAt;
 
@@ -68,8 +68,8 @@ public class Tweet {
     public void setTweetText(String text) {
         this.tweetText = text;
     }
-//
-//    public long getTimeStamp() { return timestamp; }
+
+    public Timestamp getTimeStamp() { return createdAt; }
 //
 //    public void setTimestamp(long time) { this.timestamp = time; }
 }

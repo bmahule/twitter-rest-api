@@ -62,9 +62,9 @@ objectclass: inetOrgPerson
 cn: Bob Hamilton
 sn: Hamilton
 uid: bob
-userPassword: bobspassword
+userPassword: bob
 
-dn: uid=joe,ou=otherpeople,dc=springframework,dc=org
+dn: uid=joe,ou=people,dc=springframework,dc=org
 objectclass: top
 objectclass: person
 objectclass: organizationalPerson
