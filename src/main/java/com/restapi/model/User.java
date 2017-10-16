@@ -23,6 +23,15 @@ public class User {
     @Column
     private String handle;
 
+    public User() {
+
+    }
+
+    public User(String id, String handle) {
+        this.ID = id;
+        this.handle = handle;
+    }
+
     public String getID() {
         return ID;
     }

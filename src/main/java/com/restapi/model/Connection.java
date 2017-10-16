@@ -25,6 +25,14 @@ public class Connection {
     @NotNull
     @Column(name = "followee_id")
     private String followeeID;
+    public Connection () {
+
+    }
+
+    public Connection(String follower, String followee) {
+        this.followerID = follower;
+        this.followeeID = followee;
+    }
 
     public int getConnectionID() {
         return connectionID;
@@ -50,11 +58,4 @@ public class Connection {
         this.followeeID = followeeID;
     }
 
-//    private String getConnectionID() {
-//        return connectionID;
-//    }
-//
-//    private void setConnectionID() {
-//        this.connectionID = followerID + "_" + followeeID;
-//    }
 }

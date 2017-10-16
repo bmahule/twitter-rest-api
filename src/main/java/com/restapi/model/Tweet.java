@@ -6,12 +6,9 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 /**
  * Created by bmahule on 10/10/17.
@@ -45,6 +42,11 @@ public class Tweet {
     public Tweet() {
     }
 
+    public Tweet(String userName, String tweetText) {
+        this.userName = userName;
+        this.tweetText = tweetText;
+    }
+
     public int getId() {
         return id;
     }
@@ -70,7 +72,5 @@ public class Tweet {
     }
 
     public Timestamp getTimeStamp() { return createdAt; }
-//
-//    public void setTimestamp(long time) { this.timestamp = time; }
 }
 

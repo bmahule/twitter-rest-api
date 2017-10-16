@@ -11,25 +11,21 @@ import com.restapi.model.User;
 import com.restapi.repository.ConnectionsRepository;
 import com.restapi.repository.TweetsRepository;
 import com.restapi.repository.UserRepository;
+import com.restapi.service.TweetsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -44,6 +40,13 @@ public class HomeController {
     private UserRepository userRepository;
     @Autowired
     private ConnectionsRepository connectionsRepository;
+    @Autowired
+    private TweetsService tweetsService;
+
+    @RequestMapping(value = "/")
+    public String index() {
+        return "index";
+    }
 
     @RequestMapping(value="/login", method = RequestMethod.GET)
     public void loginPage (HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -51,15 +54,16 @@ public class HomeController {
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-
-        //response.setHeader("Location", "/logout");
-        //return "redirect:/login?logout";//You can redirect wherever you want, but generally it's a good practice to show login screen again.
     }
 
     @RequestMapping(path="/api/follow")
-    public @ResponseBody void followUser (@RequestParam String followeeId) {
-        String followerId = currentUserName();
+    public @ResponseBody void followUser (@RequestParam String followeeId) throws JpaObjectRetrievalFailureException {
+        if(followeeId.isEmpty() || followeeId == null) {
+            System.out.println("followeeId cannot be empty");
+            return;
+        }
 
+        String followerId = currentUserName();
         try {
             List<User> users = userRepository.findUser(followeeId);
             if(!users.isEmpty()) {
@@ -94,8 +98,6 @@ public class HomeController {
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        //response.setHeader("Location", "/");
-        //return "redirect:/login?logout";//You can redirect wherever you want, but generally it's a good practice to show login screen again.
     }
 
     @GetMapping(path="/api/tweet") // Map ONLY GET Requests
@@ -119,39 +121,12 @@ public class HomeController {
         }
     }
 
-    @RequestMapping(path="/api/feed")
-    public @ResponseBody Iterable<Tweet> findAll() {
-        String currentUser = currentUserName();
-        List<Tweet> tweets = new ArrayList<>();
-        List<String> users = new ArrayList<>();
-        users.add(currentUser);
-        try {
-            List<Connection> connectionsList = connectionsRepository.findConnectionsForUser(currentUser);
-            if(!connectionsList.isEmpty()) {
-                int i = 0;
-                Iterator<Connection> iterator = connectionsList.iterator();
-                while (iterator.hasNext()) {
-                    Connection c = iterator.next();
-                    users.add(c.getfolloweeID());
-                }
 
-            } else {
-                System.out.println("No connections found for this user");
-            }
-        } catch (JpaObjectRetrievalFailureException e) {
-            System.out.println(e.getStackTrace());
-        }
+    @GetMapping(path="/api/feed" )
+    public @ResponseBody Page<Tweet> findPaginatedFeed(Pageable pageable) {
 
-        for (String user : users) {
-            tweets.addAll((List<Tweet>) tweetsRepository.findAll(user));
-        }
-
-        Collections.sort(
-                tweets,
-                (tweet1, tweet2) -> tweet1.getId()
-                        - tweet2.getId());
-        return tweets;
-        // Need to add condition for No Tweets
+        Page<Tweet> tweetPage = tweetsService.listAllByPage(pageable);
+        return tweetPage;
     }
 
     @RequestMapping(value = "/username", method = RequestMethod.GET)
@@ -163,12 +138,6 @@ public class HomeController {
         } catch (AuthenticationCredentialsNotFoundException e) {
             throw new AuthenticationCredentialsNotFoundException("Error in getting logged in user name");
         }
-
-        //return authentication.getPrincipal().toString();
-        //org.springframework.security.ldap.userdetails.LdapUserDetailsImpl@f1229e55: Dn: uid=bob,ou=people,dc=springframework,dc=org; Username: bob; Password: [PROTECTED]; Enabled: true; AccountNonExpired: true; CredentialsNonExpired: true; AccountNonLocked: true; Not granted any authorities
     }
-
-
-
 
 }
