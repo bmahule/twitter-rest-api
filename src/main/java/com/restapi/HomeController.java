@@ -57,10 +57,9 @@ public class HomeController {
     }
 
     @RequestMapping(path="/api/follow")
-    public @ResponseBody void followUser (@RequestParam String followeeId) throws JpaObjectRetrievalFailureException {
+    public @ResponseBody String followUser (@RequestParam String followeeId) throws JpaObjectRetrievalFailureException {
         if(followeeId.isEmpty() || followeeId == null) {
-            System.out.println("followeeId cannot be empty");
-            return;
+           return ("followeeId cannot be empty");
         }
 
         String followerId = currentUserName();
@@ -75,20 +74,25 @@ public class HomeController {
                     if (ic.isEmpty()) {
                         System.out.println("Creating new connection in DB for " + followerId + " and " + followeeId);
                         connectionsRepository.save(conn);
+                        return "Connection saved";
                     } else {
                         System.out.println("Connection for " + followerId + " and " + followeeId + " exists in DB");
+                        return "Connection for " + followerId + " and " + followeeId + " exists in DB";
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("Connection is not added in DB" + e.getMessage());
+                    return e.getMessage();
                 }
 
             } else {
                 System.out.println("User : " + followeeId + " does not exist in DB");
+                return "User : " + followeeId + " does not exist in DB";
             }
         } catch (JpaObjectRetrievalFailureException e) {
             System.out.println(e.getStackTrace());
+            return e.getMessage();
         }
     }
 
@@ -101,24 +105,22 @@ public class HomeController {
     }
 
     @GetMapping(path="/api/tweet") // Map ONLY GET Requests
-    public @ResponseBody void createNewTweet (@RequestParam String userName, @RequestParam String tweetText) {
-        if(userName.isEmpty() || userName == null) {
-            System.out.println("Username cannot be empty");
-            return;
-        }
+    public @ResponseBody String createNewTweet (@RequestParam String tweetText) {
         if(tweetText.isEmpty() || tweetText == null ) {
             System.out.println("Tweet content cannot be empty");
-            return;
+            return "Tweet content cannot be empty";
+        }
+
+        if(tweetText.length() > 255) {
+            return "Tweet content cannot more than 255 characters";
         }
         String currentUser = currentUserName();
-        if(userName.equalsIgnoreCase(currentUser)) {
-            Tweet t = new Tweet();
-            t.setUserName(userName);
-            t.setTweetText(tweetText);
-            tweetsRepository.save(t);
-        } else {
-            System.out.println("Logged in user is : " + currentUser + " doesn't match with requested user name : " + userName);
-        }
+
+        Tweet t = new Tweet();
+        t.setUserName(currentUser);
+        t.setTweetText(tweetText);
+        tweetsRepository.save(t);
+        return "Tweet saved";
     }
 
 
