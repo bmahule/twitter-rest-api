@@ -2,6 +2,8 @@
 
 Run the application : mvn spring-boot:run
 
+Run unit tests : mvn clean install / mvn test
+
 In browser : http://localhost:8082/
  
 APIs :
