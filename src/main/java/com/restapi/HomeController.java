@@ -104,7 +104,7 @@ public class HomeController {
         }
     }
 
-    @GetMapping(path="/api/tweet") // Map ONLY GET Requests
+    @RequestMapping(path="/api/tweet") // Map ONLY GET Requests
     public @ResponseBody String createNewTweet (@RequestParam String tweetText) {
         if(tweetText.isEmpty() || tweetText == null ) {
             System.out.println("Tweet content cannot be empty");
