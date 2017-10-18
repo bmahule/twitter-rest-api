@@ -33,7 +33,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
-@RequestMapping("/twitter-api/")
+@RequestMapping("/twitter-api")
 @Api(value="twitter-like-app", description="Rest APIs used for Twitter-like application")
 public class HomeController {
 

@@ -23,8 +23,8 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.restapi"))
-                //.paths(regex("/twitter-api.*"))
-                .paths(PathSelectors.any())
+                .paths(regex("/twitter-api.*"))
+                //.paths(PathSelectors.any())
                 .build()
                 .apiInfo(metaData());
     }
