@@ -43,7 +43,7 @@ class HomepageUI extends UI {
             grid.setSizeFull();
             mainLayout.addComponent(grid);
             mainLayout.setExpandRatio(grid, 1);
-            setContent(new Label("Welcome to twitter rest api demo<br/><a href='/api/feed'>Your Tweets</a>", ContentMode.HTML));
+            setContent(new Label("Welcome to twitter rest api demo<br/><a href='/twitter-api/feed'>Your Tweets</a>", ContentMode.HTML));
         } else {
             System.out.println(VaadinSession.getCurrent().getSession().getAttributeNames().toString());
         }

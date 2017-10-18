@@ -84,7 +84,7 @@ public class HomeController {
     }
 
     @ApiOperation(value = "Follow an existing Twitter user")
-    @RequestMapping(value="/follow", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value="/follow", produces = "application/json")
     public @ResponseBody
     ResponseEntity followUser (@RequestParam String followeeId) throws JpaObjectRetrievalFailureException {
         if(followeeId.isEmpty() || followeeId == null) {
@@ -127,7 +127,7 @@ public class HomeController {
     }
 
     @ApiOperation(value = "Create new tweet")
-    @RequestMapping(value="/tweet", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value="/tweet", produces = "application/json")
     public @ResponseBody ResponseEntity createNewTweet (@RequestParam String tweetText) {
         if(tweetText.isEmpty() || tweetText == null ) {
             System.out.println("Tweet content cannot be empty");
