@@ -47,6 +47,12 @@ public class Tweet {
         this.tweetText = tweetText;
     }
 
+    public Tweet(String newuser, String tweetText, Timestamp timestamp) {
+        this.userName = userName;
+        this.tweetText = tweetText;
+        this.createdAt = timestamp;
+    }
+
     public int getId() {
         return id;
     }

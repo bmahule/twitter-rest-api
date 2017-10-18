@@ -1,5 +1,6 @@
 package com.restapi;
 import com.restapi.model.Connection;
+import com.restapi.model.Tweet;
 import com.restapi.model.User;
 import com.restapi.repository.ConnectionsRepository;
 import com.restapi.repository.TweetsRepository;
@@ -19,6 +20,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.sql.Timestamp;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -74,7 +78,7 @@ public class HomeControllerTests {
         mockMvc.perform(login)
                 .andExpect(authenticated().withUsername("bob"));
 
-        this.mockMvc.perform(get("/username").with(user("bob").password("bob")))
+        this.mockMvc.perform(get("/twitter-api/username").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string("bob"));
 
@@ -89,7 +93,7 @@ public class HomeControllerTests {
 
         connectionsRepository.deleteAll();
 
-        this.mockMvc.perform(post("/api/follow").param("followeeId", "Sam").with(user("bob").password("bob")))
+        this.mockMvc.perform(post("/twitter-api/follow").param("followeeId", "Sam").with(user("bob").password("bob")))
         .andDo(print()).andExpect(status().isOk())
         .andDo(print()).andExpect(content().string("Connection saved"));
     }
@@ -103,10 +107,10 @@ public class HomeControllerTests {
 
         connectionsRepository.deleteAll();
 
-        this.mockMvc.perform(post("/api/follow").param("followeeId", "Sam").with(user("bob").password("bob")))
+        this.mockMvc.perform(post("/twitter-api/follow").param("followeeId", "Sam").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andDo(print()).andExpect(content().string("Connection saved"));
-        this.mockMvc.perform(post("/api/follow").param("followeeId", "Sam").with(user("bob").password("bob")))
+        this.mockMvc.perform(post("/twitter-api/follow").param("followeeId", "Sam").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andDo(print()).andExpect(content().string("Connection for bob and Sam exists in DB"));;
     }
@@ -115,7 +119,7 @@ public class HomeControllerTests {
     public void followShouldFailIffFolloweeDoesNotExist() throws Exception {
         userRepository.deleteAll();
 
-        this.mockMvc.perform(post("/api/follow").param("followeeId", "Tom").with(user("bob").password("bob")))
+        this.mockMvc.perform(post("/twitter-api/follow").param("followeeId", "Tom").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andDo(print()).andExpect(content().string("User : Tom does not exist in DB"));
     }
@@ -124,7 +128,7 @@ public class HomeControllerTests {
     @Test
     public void tweetApiShouldSucceedForValidUserAndText() throws Exception {
 
-        this.mockMvc.perform(post("/api/tweet").param("tweetText", "Tom").with(user("bob").password("bob")))
+        this.mockMvc.perform(post("/twitter-api/tweet").param("tweetText", "Tom").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andDo(print()).andExpect(content().string("Tweet saved"));
     }
@@ -132,7 +136,7 @@ public class HomeControllerTests {
     @Test
     public void tweetApiShouldFailForValidUserAndEmptyText() throws Exception {
 
-        this.mockMvc.perform(post("/api/tweet").param("tweetText", "").with(user("bob").password("bob")))
+        this.mockMvc.perform(post("/twitter-api/tweet").param("tweetText", "").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andDo(print()).andExpect(content().string("Tweet content cannot be empty"));
     }
@@ -145,7 +149,7 @@ public class HomeControllerTests {
         }
         //String tweetContent = outputBuffer.toString();
 
-        this.mockMvc.perform(post("/api/tweet").param("tweetText", outputBuffer.toString()).with(user("bob").password("bob")))
+        this.mockMvc.perform(post("/twitter-api/tweet").param("tweetText", outputBuffer.toString()).with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andDo(print()).andExpect(content().string("Tweet content cannot more than 255 characters"));
     }
@@ -163,16 +167,16 @@ public class HomeControllerTests {
 
         tweetsRepository.deleteAll();
 
-        this.mockMvc.perform(post("/api/tweet").param("tweetText", "Bob").with(user("bob").password("bob")))
+        this.mockMvc.perform(post("/twitter-api/tweet").param("tweetText", "Bob").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andDo(print()).andExpect(content().string("Tweet saved"));
 
-        this.mockMvc.perform(post("/api/tweet").param("tweetText", "Sam").with(user("Sam").password("Sam")))
+        this.mockMvc.perform(post("/twitter-api/tweet").param("tweetText", "Sam").with(user("Sam").password("Sam")))
                 .andDo(print()).andExpect(status().isOk())
                 .andDo(print()).andExpect(content().string("Tweet saved"));
 
 
-        this.mockMvc.perform(get("/api/feed").with(user("bob").password("bob")))
+        this.mockMvc.perform(get("/twitter-api/feed").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].userName").value("bob"))
                 .andExpect(jsonPath("$.content[0].tweetText").value("Bob"))
@@ -196,16 +200,16 @@ public class HomeControllerTests {
         tweetsRepository.deleteAll();
 
         for(int i = 0; i < 5; i++) {
-            this.mockMvc.perform(post("/api/tweet").param("tweetText", "Bob-Tweet#" + i).with(user("bob").password("bob")))
+            this.mockMvc.perform(post("/twitter-api/tweet").param("tweetText", "Bob-Tweet#" + i).with(user("bob").password("bob")))
                     .andDo(print()).andExpect(status().isOk())
                     .andDo(print()).andExpect(content().string("Tweet saved"));
 
-            this.mockMvc.perform(post("/api/tweet").param("tweetText", "Sam-Tweet#" + i).with(user("Sam").password("Sam")))
+            this.mockMvc.perform(post("/twitter-api/tweet").param("tweetText", "Sam-Tweet#" + i).with(user("Sam").password("Sam")))
                     .andDo(print()).andExpect(status().isOk())
                     .andDo(print()).andExpect(content().string("Tweet saved"));
         }
 
-        this.mockMvc.perform(get("/api/feed").param("page", "0").param("size", "5").with(user("bob").password("bob")))
+        this.mockMvc.perform(get("/twitter-api/feed").param("page", "0").param("size", "5").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalPages").value(2))
                 .andExpect(jsonPath("$.totalElements").value(10))
@@ -214,7 +218,7 @@ public class HomeControllerTests {
                 .andExpect(jsonPath("$.numberOfElements").value(5))
                 .andExpect(jsonPath("$.first").value("true"));
 
-        this.mockMvc.perform(get("/api/feed").param("page", "1").param("size", "5").with(user("bob").password("bob")))
+        this.mockMvc.perform(get("/twitter-api/feed").param("page", "1").param("size", "5").with(user("bob").password("bob")))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalPages").value(2))
                 .andExpect(jsonPath("$.totalElements").value(10))
@@ -224,5 +228,24 @@ public class HomeControllerTests {
                 .andExpect(jsonPath("$.first").value("false"))
                 .andExpect(jsonPath("$.last").value("true"));
     }
+
+//    @Test // Load test
+//    public void createUsersAndTweets() throws Exception {
+//         userRepository.deleteAll();
+//
+//        for(int i = 0; i < 10000; i++) {
+//            String newuser = "user" + i;
+//            User user = new User(newuser, newuser);
+//            userRepository.save(user);
+//            for (int j = 0; j < 100; j++) {
+//                String tweetText = "Tweet" + j;
+//                this.mockMvc.perform(post("/twitter-api/tweet").param("tweetText", tweetText).with(user(newuser).password(newuser)))
+//                        .andDo(print()).andExpect(status().isOk())
+//                        .andDo(print()).andExpect(content().string("Tweet saved"));
+//            }
+//        }
+//        userRepository.deleteAll();
+//        tweetsRepository.deleteAll();
+//    }
 
 }

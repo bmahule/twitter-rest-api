@@ -73,7 +73,11 @@ public class TweetsServiceImpl implements TweetsService {
                         - tweet2.getId());
 
         int start = pageable.getOffset();
-        int end = (start + pageable.getPageSize()) > tweets.size() ? tweets.size() : (start + pageable.getPageSize());
+        int end = ((start + pageable.getPageSize()) > tweets.size()) ? tweets.size() : (start + pageable.getPageSize());
+        System.out.println("start : " + start); // 5   0  2
+        System.out.println("end : " + end); // 1   2   4
+        System.out.println("pageable.getPageSize : " + pageable.getPageSize()); // 5    2   2
+        System.out.println("tweets.size : " + tweets.size()); // 1    4   4
         return new PageImpl<Tweet>(tweets.subList(start, end), pageable, tweets.size());
 
     }
